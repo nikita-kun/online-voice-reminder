@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Online Voice Reminder</title>
+</head>
+<body onload='setTimeout(updateVoices, 500);'>
+  <textarea cols="30" rows="10">Hey! Put down your phone, get up, and clean up the house!</textarea>
+  <br>
+  <label>Delay</label>
+  <input class="delay" type="number" name="delay" value=100></input><label>sec</label><br>
+  <label>Voice</label>
+  <select class="voice">
+  </select>
+  
+  <button class="play">Play</button>
+  
+  <script>
+    const play = document.querySelector('.play')
+    const delay = document.querySelector('.delay')
+    const voiceNumber = document.querySelector('.voice')
+    const textarea = document.querySelector('textarea')
+    
+    function updateVoices(){
+		voices = window.speechSynthesis.getVoices();
+	    for (i=0; i<voices.length; i++){
+	    	if (!voices[i].lang.startsWith("en"))
+	    		continue
+		    const newOption = document.createElement('option')
+			const optionText = document.createTextNode(voices[i].name+" "+voices[i].lang)
+			newOption.appendChild(optionText)
+			newOption.setAttribute('value',i)
+			voiceNumber.appendChild(newOption)
+	    }
+    }
+    
+    function l(){var a=speechSynthesis.getVoices();voice=a[voiceNumber.value]}function speak(a,b){var c=new SpeechSynthesisUtterance;c.text=a,c.volume=1,c.rate=1,c.pitch=1,voice&&(c.voice=voice),window.speechSynthesis.speak(c),c.onend=b}function speaks(a,b){return 0==a.length?void(b&&setTimeout(b,0)):void speak(a.shift(),function(){setTimeout(function(){speaks(a,b)},300)})}var voice=null;l(),window.speechSynthesis.onvoiceschanged=function(a){l()};
+
+	function pronounce() {
+	  l();
+      speak(textarea.value);
+      setTimeout(pronounce, delay.value*1000)
+      play.disabled = true;
+    }
+
+    play.addEventListener('click', () => {
+      pronounce();
+    })
+
+  </script>
+</body>
+</html>
